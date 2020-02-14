@@ -1,0 +1,272 @@
+Essa tabela Frota foi feita no Shamp
+com instrução SQL
+
+
+CREATE TABLE Fornecedor(F_ID INTEGER, PRIMARY KEY, 
+F_NOME CHAR(40) NOT NULL, 
+F_CIDADE VARCHAR(30) 
+)
+
+CREATE TABLE PRODUTO
+(P_ID INT , 
+ P_F_ID INT, 
+ P_DESCRICAO VARCHAR(30), 
+ P_STOCKATUAL int,
+PRIMARY KEY (P_ID),
+FOREIGN KEY (P_F_ID) REFERENCES fornecedor (F_ID))
+
+     CREATE TABLE COMPRA
+    (
+    C_ID INT, 
+    C_DATA datetime,
+        C_F_ID INT,
+        C_P_ID INT, 
+        C_QUANTIDADE INT,PRIMARY KEY(C_ID)
+     )
+
+
+--------------
+http://www.dontpad.com/bdfrota
+
+
+************* CRIAR A BASE DE DADOS  ******************
+Create database frota
+
+
+************* CRIAR A TABELA TIPO ******************
+create table tipo
+(t_cod int AUTO_INCREMENT,
+t_des varchar(20), 
+primary key (t_cod))
+
+
+************ COMANDO PARA INSERIR DADOS **************
+INSERT INTO tipo (t_des) VALUES 
+('Familiar'),
+('Comercial'),
+('Pesado')
+
+
+************* CRIAR A TABELA VEICULO******************
+
+create table veiculo
+(v_mat varchar(10),
+v_marca varchar(30) not null,
+v_km int, 
+v_disp boolean,
+v_t_cod int,
+primary key (v_mat), 
+foreign key (v_t_cod) references tipo (t_cod))
+
+
+************ COMANDO PARA INSERIR DADOS **************
+
+INSERT INTO veiculo (v_mat, v_marca, v_km, v_disp, v_t_cod) VALUES 
+('00-AA-00', 'FORD MONDEO', 12000,true,1),
+('00-BB-00','FORD FIESTA',18000,true,2),
+('00-CC-00','RENAULT CLIO',18000,false,2),
+('00-XX-00','OPEL CORSA',48000,true,2),
+('00-EE-00','VW PASSAT',18000,true,1),
+('00-FF-00','OPEL ASTRA',18000,false,1),
+('00-PP-00','RENAULT MEGANE',38000,true,1),
+('00-II-00','VOLVO PEGA MONSTRO',18000,true,3),
+('00-JJ-00','VOLVO PESADOTE',22000,true,3),
+('00-SS-00','VOLVO 10T',18000,true,3),
+('00-ZZ-00','OPEL ZAFIRA',32000,false,1)
+
+
+
+************* CRIAR A TABELA MOTORISTA ******************
+CREATE TABLE motorista
+(m_cc int,
+ m_nome varchar(30),
+ m_disp boolean,
+ m_validade_carta date,
+ primary key (m_cc))
+
+************ COMANDO PARA INSERIR DADOS **************
+INSERT INTO motorista VALUES 
+(1, 'Alexandre Vitor Simões Bernardo',1,'2020-03-15'),
+(2, 'Ana Passos',1,'2030-11-02'),
+(3, 'Carlos Sottomayor',0,'2022-02-15'),
+(4, 'Carlos Campos',0,'2032-06-22'),
+(5, 'Miguel Carreira',1,'2040-07-02'),
+(6, 'Daniel Francisco',1,'2040-08-02'),
+(7, 'Gilmar Freitas',0,'2040-11-30'),
+(8, 'Isabela  Macena',0,'2040-11-02'),
+(9, 'Jaime Soares',0,'2040-10-20'),
+(10, 'Luís Pacheco',1,'2040-12-22'),
+(11,'Pedro Ferreira',0,'2030-08-02'),
+(12,'Pedro Ribeiro',1,'2045-09-02'),
+(13,'Ricardo Santos',1,'2049-12-02'),
+(14,'Rui Barros',1,'2040-02-02'),
+(15,'Vitor Ramos',1,'2040-07-02'),
+(16,'Paulo Borges',1,'2020-02-02')
+
+
+
+SELECT * FROM motorista WHERE(m_disp=1)
+---------------------------
+SELECT m_nome, m_validade_carta FROM motorista
+WHERE (m_validade_carta < CURRENT_DATE)
+
+----------------------------
+SELECT * FROM veiculo ORDER BY v_T_cod
+---------------------------------
+SELECT * FROM veiculo, tipo 
+WHERE (veiculo.v_t_cod = tipo.t_cod)
+ORDER BY v_T_cod
+
+---------------------------------
+************* CRIAR A TABELA SERVIÇO  ******************
+CREATE TABLE SERVICO 
+(S_ID int AUTO_INCREMENT,
+S_DATA_INICIO date,
+S_V_MAT varchar(10),
+S_M_CC int,S_KM_INICIAL INT, 
+S_KM_FINAL INT,
+S_DATA_FINAL DATE, 
+PRIMARY KEY (S_ID),
+FOREIGN KEY (S_V_MAT) REFERENCES veiculo (V_MAT),
+FOREIGN KEY (S_M_CC) REFERENCES motorista (M_CC)) 
+------------------
+
+
+************* INSERIR DADOS EM SERVIÇOS  *********************************
+INSERT INTO SERVICO
+VALUES 
+(NULL,'2020/1/04','00-AA-00',1,10000,12000,'2020/1/10'),
+(NULL,'2020/1/08','00-SS-00',2,15000,18000,'2020/1/18'),
+(NULL,'2020/1/18','00-AA-00',5,0,0,0),
+(NULL,'2020/1/22','00-FF-00',3,0,0,0),
+(NULL,'2020/1/25','00-SS-00',7,0,0,0),
+(NULL,'2020/1/31','00-XX-00',9,0,0,0),
+(NULL,'2020/2/09','00-PP-00',12,0,0,0),
+(NULL,'2020/2/11','00-JJ-00',15,0,0,0),
+(NULL,'2020/2/14','00-ZZ-00',14,0,0,0),
+(NULL,'2020/2/18','00-II-00',8,0,0,0),
+(NULL,'2020/2/19','00-CC-00',11,0,0,0),
+(NULL,'2020/2/18','00-EE-00',4,0,0,0),
+(NULL,'2020/1/04','00-BB-00',1,0,0,0)
+
+
+
+ Procedimetos e rotinas
+*********** Listagem de servicos ************** 
+(Exemplos)
+select s_v_mat, v_mat, v_marca from servico, veiculo
+where (v_mat = s_v_mat) 
+
+select s_v_mat, v_mat , v_marca from servico 
+inner join veiculo on servico.s_v_mat = veiculo.v_mat
+
+select s_v_mat, v_mat , v_marca from servico 
+left join veiculo on servico.s_v_mat = veiculo.v_mat
+
+
+******** Listagem de serviços de cada carro *******
+select s_v_mat, v_mat , v_marca from servico 
+RIGHT join veiculo on servico.s_v_mat = veiculo.v_mat
+where servico.s_v_mat IS not null
+
+
+******** Lista todos os veiculos sem serviços ***********
+select servico.s_v_mat, veiculo.v_mat 
+from servico 
+RIGHT join veiculo on servico.s_v_mat = veiculo.v_mat
+where servico.s_v_mat IS null
+
+************ ALTERAR DA TABELA valores 
+UPDATE veiculo
+SET v_disp=0;
+
+UPDATE motorista
+SET m_disp=0;
+
+
+************* LIMPAR O CONTEÚDO DA TABELA
+TRUNCATE TABLE servico
+
+
+ordenar por nome
+SELECT * FROM motorista ORDER BY m_nome
+--------------------------
+ordenar vencidas na dat de hj
+SELECT * FROM motorista WHERE m_validade_carta < '2020-12-31'
+--------------------------------
+
+buscar por nome
+SELECT * FROM motorista WHERE m_nome LIKE '%simões%'
+
+-------------------------------------
+condição de busca
+SELECT * FROM veiculo WHERE v_t_cod = 1 AND v_marca LIKE '%ford%'
+----------------------
+lista os que estão sem serviço 
+SELECT servico.S_V_MAT,veiculo.v_mat , v_marca FROM servico RIGHT JOIN veiculo ON 
+servico.S_V_MAT = veiculo.v_mat WHERE servico.S_V_MAT IS null
+
+----------------------
+para selecionar os em uso e não uso
+SELECT servico.S_V_MAT,veiculo.v_mat FROM servico RIGHT JOIN veiculo ON 
+servico.S_V_MAT = veiculo.v_mat
+
+*********** Listagem de servicos ************** 
+(Exemplos)
+select s_v_mat, v_mat, v_marca from servico, veiculo
+where (v_mat = s_v_mat) 
+
+select s_v_mat, v_mat , v_marca from servico 
+inner join veiculo on servico.s_v_mat = veiculo.v_mat
+
+select s_v_mat, v_mat , v_marca from servico 
+left join veiculo on servico.s_v_mat = veiculo.v_mat
+
+
+******** Listagem de serviços de cada carro *******
+select s_v_mat, v_mat , v_marca from servico 
+RIGHT join veiculo on servico.s_v_mat = veiculo.v_mat
+where servico.s_v_mat IS not null
+
+
+******** Lista todos os veiculos sem serviços ***********
+select servico.s_v_mat, veiculo.v_mat 
+from servico 
+RIGHT join veiculo on servico.s_v_mat = veiculo.v_mat
+where servico.s_v_mat IS null
+
+------
+ALTER TABLE motorista add m_local varchar(30);
+---------------------------------
+
+UPDATE motorista set m_local = "Porto"
+----------------------------------
+UPDATE motorista set m_local = 'Vila nova de Gaia' WHERE m_cc = 7
+-----------------
+UPDATE motorista SET m_disp = 0 
+WHERE m_validade_carta < CURRENT_DATE
+----------------------------------
+
+criar um procedimento para atualizar o Km inicial depois do serviço feito
+UPDATE veiculo
+inner join servico on servico.S_V_MAT  = veiculo.v_mat
+inner join motorista on motorista.m_cc = servico.S_M_CC
+set veiculo.v_km = servico.S_KM_FINAL, 
+veiculo.v_disp = 1, 
+motorista.m_disp = 1
+WHERE veiculo.v_km < servico.S_KM_FINAL
+
+--------------------
+//Rotina para atualizaros Km do serviço inicial
+RotinaAtualizaServicoKMInicial
+UPDATE  servico
+INNER JOIN veiculo on servico.S_V_MAT = veiculo.v_mat
+
+set S_KM_INICIAL = veiculo.v_km
+
+WHERE S_KM_INICIAL < servico.S_KM_FINAL
+
+//Para eliminar definir como parametro (var_mat(varchar 10))
+EliminarVeiculoMatricula
+DELETE FROM veiculo
+WHERE veiculo.v_mat = var_mat
